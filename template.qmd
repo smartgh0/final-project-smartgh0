@@ -1,6 +1,6 @@
 ---
 title: "Final Project Report"
-author: "Your Name (NetID)"
+author: "Solomon Nyamekye (SN66)"
 jupyter: julia-1.10
 date: 2024-04-30
 
@@ -39,13 +39,23 @@ execute:
 ---
 
 # Introduction
+The project seek to investigate the impact of uncertainties from Sea level rise, storm surge, and discount rates on insurance premiums. The annual expected damage is a major factor in estimating insurance premiums for buildings in flood prone locations, and the work seek to explore how the uncertainties in these variables that make up the annual expected damage affects the estimates. 
+
+The project seek also to explore the savings in insurance premiums when elevating a house by application of elevating certificate thorugh which FEMA  gives qualifying discounts to home owners who elevates their homes to certian hieghts. 
 
 ## Problem Statement
+Expected damage or loss is an important factor in calculating insurance premiums. There are uncertainties associated with sea level rise, discount rates, storm surge and other variables that make up the expected damage or loss. 
+
+Using probabilitic approach to explore how these uncertainties affects the expected annual damage or losses with help insurance companies in computing their insurance premiums. Exploring also the savings in insurance premium as a result of elevating a house for house owners will also help home owners in their decision on elevating their homes. 
 
 Clearly define the problem statement that your chosen feature aims to address.
 Explain the significance of this problem in the context of climate risk management.
 
 ## Selected Feature
+
+1. Policy search; to explore how various input variables impact final estimated insurance premium.
+2. Optimization; to find Optimal elevation level that will maximize savings in insurance premium
+3. Sequencial decision making to decide when to elevate after setting a threshold for savings  
 
 Describe the feature you have selected to add to the existing decision-support tool.
 Discuss how this feature relates to the problem statement and its potential to improve climate risk assessment.
