@@ -171,7 +171,7 @@ end
 #| echo: false
 Random.seed!(421521)
 N_SOW = 100_000
-N_SOW_opt = 1000 to start
+N_SOW_opt = 1000 #to start
 sows = [draw_sow() for _ in 1:N_SOW]
 sows_opt = first(sows, N_SOW_opt);
 ```
