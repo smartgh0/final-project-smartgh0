@@ -12,99 +12,474 @@ date: 2024-04-30
 # https://quarto.org/docs/reference/formats/docx.html
 
 format: 
-    pdf:
-        documentclass: article
-        fontsize: 11pt
-        geometry:
-            - margin=1in  
+    #html: default
+    #pdf:
+        #documentclass: article
+        #fontsize: 11pt
+        #geometry:
+            #- margin=1in  
+        #number-sections: true
+        #code-line-numbers: true
+     docx: 
+        toc: true
+        fig-format: png
         number-sections: true
         code-line-numbers: true
-    # docx: 
-    #    toc: true
-    #    fig-format: png
-    #    number-sections: true
-    #    code-line-numbers: true
 
 date-format: "ddd., MMM. D"
 
 # See Quarto docs: https://quarto.org/docs/authoring/footnotes-and-citations.html
 # you can export your references from Zotero, EndNote, or other reference managers
 # from Zotero you'll need https://retorque.re/zotero-better-bibtex/
-references: references.bib
+bibliography: "references.bib"
 
 # recommended, but not required
 # you will need jupyter-cache installed
 execute: 
-  cache: true
+  cache: false
 ---
 
 # Introduction
-The project seek to investigate the impact of uncertainties from Sea level rise, storm surge, discount rates, and insurance premiums on our annual expected damages in the house elevation problem.
 
-Premium = E[losses] + V.stdev [loses]
- 
-## Problem Statement 
-Adding insurance premium in the house elevation problem to explore it's impact on expected annual damages. 
+In this final project, we delve into the significance of integrating the risk premium into house elevation models. We explore how it affects expected average damages (EAD), net present value (NPV), and overall cost-benefits analysis. Equity risk premium model assumes that investors demand a higher return or benefits for accepting the additional risk associated with investing in the market and adding this to the house elevation model, integrates risk-reward trade-off of elevating homes [@investopedia2021].
 
-Using probabilitic approach to explore how these uncertainties affects the expected annual damage
-Considering insrance premium in our model help us explore the trade-offs between upfront cost or borrowing and insurance costs needs good premiums
+By analyzing real-world examples and leveraging asset pricing models, we highlight the practical implications of considering risk in elevation strategies.
 
+## House information
 
-Clearly define the problem statement that your chosen feature aims to address.
-Explain the significance of this problem in the context of climate risk management.
+Zillow was used for the identification of a single-family residence with 4 bedrooms and 4 bathrooms situated approximately 0.56 miles from Galveston Pier 21, TX. The distance from the gauge was estimated using Google Maps, while the elevation of the house above Mean Sea Level (MSL) was determined using the USGS National Map Viewer. The estimated value of the house and area of the house were from Zillow. - Depth-damage function from depth-damage functions from the HAZUS model developed by the USArmy Corps of Engineers [@usaehazus] were used. The USACE Galvestion District Damage function with ID 85 was selected. The USACE Galveston functions are based on flood damage records, as well as post event surveys and are widely used by the Galveston district where the selected building is located. The selected description is a good fit for the selected building (the function is for hotels/motels) which is a popular hotel in the region that serves mostly fishermen in the area. Below are the details for the selected house.
+
+-   Galveston Pier 21, TX - Station (ID: 8771450):
+-   Latitude: 29° 18.6 N, Longitude: 94° 47.6 W.
+-   Historical water level extremes: Max (ref MHHW) 12.11 ft (Sep 08, 1900), Min (ref MLLW) -6.28 ft (Jan 11, 1908).
+-   Mean tidal range: 1.02 ft.
+-   Harbour House Hotel:
+-   Address: 21 Galveston, Texas 77550.
+-   Estimated distance from gauge: 319 feet (inland).
+-   Estimated building elevation: 6.0 feet.
+-   House Value: 200,00 USD
+
+## Problem Statement
+
+The objective is to investigate the influence of equity risk premiums on expected annual damages (NPV) and the cost-benefit analysis associated with house elevation decisions.
+
+By incorporating the risk premium into the house elevation model, it can encourage and assist homeowners in making informed decisions regarding house elevation, taking into account both upfront costs and benefits. Furthermore, elevated homes usually qualify for lower flood insurance premiums, and the inclusion of the risk premium allows us to determine the compensation homeowners receive for their decision to elevate their homes; risk-reward trade-off.
 
 ## Selected Feature
 
-1. Policy search; to explore how various input variables impact expected losses
-2. Optimization; to find Optimal elevation level 
-3. Sequencial decision making to decide when to elevate after setting a threshold for insurance premium.
+-   The chosen feature entails the incorporation of Equity Risk Premium (ERP) into our house elevation model. ERP is a crucial metric that reflects the price of risk in equity markets. By integrating ERP, we can directly account for its impact on the cost of equity for homeowners investing in elevation.
 
-Describe the feature you have selected to add to the existing decision-support tool.
-Discuss how this feature relates to the problem statement and its potential to improve climate risk assessment.
+-   This allows us to adjust the expected return on elevated homes, taking into consideration the physical and financial risks involved. Furthermore, elevated homes with lower risk may qualify for reduced flood insurance premiums. The house elevation model is now designed to support homeowners make informed decisions that balance both physical risk and financial implications.
+
+-   By integrating ERP, we bridge the gap between climate science and financial realities, ensuring that our elevation choices are both effective and economically sound.
 
 # Literature Review
 
-Provide a brief overview of the theoretical background related to your chosen feature.
-Cite at least two relevant journal articles to support your approach (see [Quarto docs](https://quarto.org/docs/authoring/footnotes-and-citations.html) for help with citations).
-Explain how these articles contribute to the justification of your selected feature.
+The concept of a risk premium is integral to understanding investment returns, representing the expected yield of an asset beyond the risk-free rate of return. This premium serves as a form of compensation for investors, offering a reward for assuming the additional risk associated with a particular investment over that of a risk-free asset [@investopedia2021]. Specifically, the equity risk premium (ERP) denotes the surplus return that investing in the stock market provides over the risk-free rate, constituting the equity cost. The greater the potential for capital loss, the higher the compensation an investor anticipates.
+
+While many studies have explored house elevation, only a few have tackled the financial risks (equity risk premium) involved in such a project. @botzen2013 have concentrated on the willingness to pay (WTP) for flood insurance and the WTP for risk elimination through elevation. Furthermore, @xian2017 proposed an optimal elevation strategy to minimize the sum of upfront elevation costs and cumulative expected losses, including risk-based insurance premiums over the house's lifespan [@xian2017]. Their innovative approach also suggested a voucher program linked with optimal elevation analysis, tailoring the voucher cost to factors such as loan length and interest rates, thereby indirectly compensating homeowners for the equity risk premium associated with the capital investment in home elevation.
 
 # Methodology
 
 ## Implementation
 
-You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
-Detail the steps taken to implement the selected feature and integrate it into the decision-support tool.
-Include code snippets and explanations where necessary to clarify the implementation process.
+The equity risk premium (ERP) can be estimate by;
 
-## Validation
+$ERP = R_a - R_f = \beta_a (R_m - R_f)$
 
-As we have seen in labs, mistakes are inevitable and can lead to misleading results.
-To minimize the risk of errors making their way into final results, it is essential to validate the implemented feature.
-Describe the validation techniques used to ensure the accuracy and reliability of your implemented feature.
-Discuss any challenges faced during the validation process and how they were addressed.
+Where:
+
+( R_a ) = Expected return on an equity investment, ( R_f ) = Risk-free rate of return, ( \\beta_a ) = Beta of the equity investment, ( R_m ) = Expected return of the market
+
+-   λ \* \[risky expected rate of returns - risk-free return\]
+
+-   λ is the beta coefficient that ranges from 0 to 1
+
+-   (risky expected rate of returns - risk-free return) represent the variance or standard deviation
+
+-   To implement risk premium (equity risk premium), we introduced a new parameter λ to our state of the world, sow. λ is sampled using normal probability distribution.
+
+-   λ is added to our "draw_sow function"
+
+```{julia}
+#| echo: false
+using CSV
+using DataFrames
+using DataFramesMeta
+using Distributions
+using LaTeXStrings
+using Metaheuristics
+using Plots
+using Random
+using Unitful
+using Revise
+using HouseElevation
+Plots.default(; margin=5Plots.mm)
+```
+
+```{julia}
+#| echo: false
+#| output: false
+
+#We begin by defining the variables that don't change from one SOW to the next. 
+#We load these into the `ModelParams, house and draw out sow.
+# 
+house = let
+    haz_fl_dept = CSV.read("data/haz_fl_dept.csv", DataFrame) # read in the file
+    desc = "one story, Contents, fresh water, short duration"
+    #row = @rsubset(haz_fl_dept, :Description == desc)[1, :] # select the row I want
+    row = @rsubset(haz_fl_dept, :DmgFnId == 56)[1, :]
+    area = 2400u"ft^2"
+    height_above_gauge = 12u"ft"
+    House(row; area=area, height_above_gauge=height_above_gauge, value_usd=506_000)
+end
+
+p = ModelParams(; house=house, years=2024:2083)
+
+#Define how we will sample the states of the world.
+
+slr_scenarios = let
+    df = CSV.read("data/slr_oddo.csv", DataFrame)
+    [Oddo17SLR(a, b, c, tstar, cstar) for (a, b, c, tstar, cstar) in eachrow(df)]
+end
+
+function draw_surge_distribution()
+    μ = rand(Normal(5, 1))
+    σ = rand(Exponential(1.25))
+    ξ = rand(Normal(0.1, 0.05))
+    return GeneralizedExtremeValue(μ, σ, ξ)
+end
+
+function draw_discount_rate()
+    return rand(Normal(0.05, 0.03))
+end
+```
+
+```{julia}
+#| output: false
+
+#we add the beta coefficient to our sow
+function draw_sow()
+    λ = rand(Normal(0.06, 0.0004))
+    slr = rand(slr_scenarios)
+    surge_params = draw_surge_distribution()
+    discount = draw_discount_rate()
+    return SOW(slr, surge_params, discount, λ)
+end
+```
+
+```{julia}
+#| echo: false
+Random.seed!(421521)
+N_SOW = 1000#_000
+N_SOW_opt = 10# to start
+sows = [draw_sow() for _ in 1:N_SOW]
+sows_opt = first(sows, N_SOW_opt);
+```
+
+```{julia}
+#| echo: false
+#| output: false
+
+#We have a single decision variable, the height of the house above the ground.
+#This can be any real number between 0 and 14 feet.
+bounds = boxconstraints(; lb=[0.0], ub=[14.0])
+#We next need an objective function.
+#Recall that we want to _maximize_ NPV, but the optimization package we are using is set up to _minimize_.
+#Run the model for a given action and SOW
+#Expected Annual Damages are computed adding risk-based premuim
+```
+
+```{julia}
+#| echo: false
+#| output: false
+function trapz(x, y)
+    return sum((x[2:end] - x[1:(end-1)]) .* (y[2:end] + y[1:(end-1)])) * 0.5
+end
+```
+
+## New function for run simulation
+
+-   New function, "run_sim_risk" is created with modification of the expected annual damages (EAD) to incorporate the ERP into computation of the "EAD".
+-   The EAD is then discounted over the number of years (2024:2083) get the net present value for after incorporating risk premium.
+
+```{julia}
+function run_sim_risk(a::Action, sow::SOW, p::ModelParams, λ::Float64)
+    #| output: false
+
+    # first, we calculate the cost of elevating the house
+    construction_cost = elevation_cost(p.house, a.Δh_ft)
+
+    # we don't need to recalculate the steps of the trapezoidal integral for each year
+    storm_surges_ft = range(
+        quantile(sow.surge_dist, 0.0005); stop=quantile(sow.surge_dist, 0.9995), length=130
+    )
+
+    eads = map(p.years) do year
+
+        # get the sea level for this year
+        slr_ft = sow.slr(year)
+
+        # Compute EAD using trapezoidal rule
+        pdf_values = pdf.(sow.surge_dist, storm_surges_ft) # probability of each
+        depth_ft_gauge = storm_surges_ft .+ slr_ft # flood at gauge
+        depth_ft_house = depth_ft_gauge .- (p.house.height_above_gauge_ft + a.Δh_ft) # flood @ house
+        damages_frac = p.house.ddf.(depth_ft_house) ./ 100 # damage
+        mean_damages = mean(damages_frac)
+        std_damages = std(damages_frac)
+        ead = (mean_damages + sow.λ * std_damages) * p.house.value_usd
+    end
+
+    years_idx = p.years .- minimum(p.years)
+    discount_fracs = (1 - sow.discount_rate) .^ years_idx
+    ead_npv = sum(eads .* discount_fracs)
+    return -(ead_npv + construction_cost)
+end
+```
+
+## Risk based objective function
+
+-   New objective function which incorporate new parameter λ is created.
+-   The new function is then passed to our optimization function
+
+```{julia}
+function objective_function_risk(Δh::Vector{Float64})
+    #| output: false
+    λ = rand(Normal(0.06, 0.0004))
+    a = Action(Δh[1])
+    npvs = [run_sim_risk(a, sow, p, λ) for sow in sows_opt]
+    return -mean(npvs)
+end
+```
+
+```{julia}
+#| echo: false
+#| output: false
+function objective_function(Δh::Vector{Float64})
+    a = Action(Δh[1])
+    npvs = [run_sim(a, sow, p) for sow in sows_opt]
+    return -mean(npvs)
+end
+```
+
+```{julia}
+#| echo: false
+#| output: false
+
+# Testing our objective functions
+r = [2.0]
+println(objective_function_risk(r))
+println(objective_function(r))
+```
+
+```{julia}
+#| echo: false
+#| output: false
+
+#We can throw this straight into the `optimize` function:
+result = optimize(objective_function, bounds)
+```
+
+```{julia}
+#| echo: false
+#| output: false
+result_risk = optimize(objective_function_risk, bounds)
+```
+
+```{julia}
+#| echo: false
+#| output: false
+minimum(result)
+minimum(result_risk)
+
+#and the value of the decision variable that achieves that minimum with:
+minimizer(result)
+minimizer(result_risk)
+
+#This seems like it's working plausibly.
+#Let's try now with more SOWs.
+N_SOW_opt = 100
+sows_opt = first(sows, N_SOW_opt)
+
+#Since I'm using more SOWs here, I'll also increase the time limit for the optimization to three minutes.
+options = Options(; time_limit=180.0, f_tol_rel=10.0)
+
+#To use options, we have to choose an algorithm.
+#See list of algorithms [here](https://jmejia8.github.io/Metaheuristics.jl/stable/algorithms/).
+#The `ECA` algorithm is suggested as a default, so we'll use that.
+algorithm = ECA(; options=options)
+
+#Before we run the optimization, let's set a random seed.
+#This will make our results more reproducible.
+#We can then vary the seed to see how sensitive our results are to the random seed.
+Random.seed!(421521)
+result = optimize(objective_function, bounds, algorithm)
+```
+
+```{julia}
+#| echo: false
+#| output: false
+
+Random.seed!(421521)
+result = optimize(objective_function_risk, bounds, algorithm)
+```
+
+```{julia}
+#| echo: false
+#| output: false
+display(minimum(result))
+display(minimizer(result))
+```
+
+```{julia}
+#| output: false
+#| echo: false
+display(minimum(result_risk))
+display(minimizer(result_risk))
+```
+
+# Validation
+
+we can use brute force. We can compare by plotting the risk-based objective function and the initial objective function for a range of elevations (from 0 to 14 ft) using all SOWs.
+
+```{julia}
+#| output: false
+#| echo: false
+
+λ = rand(Normal(0.06, 0.0004))
+elevations_try = 0:0.5:14
+actions_try = Action.(elevations_try)
+N_more = 1000#00
+npvs_opt = [mean([run_sim(a, sow, p) for sow in sows_opt]) for a in actions_try]
+npvs_moore = [mean([run_sim(a, sow, p) for sow in first(sows, N_more)]) for a in actions_try]
+npvs_opt_risk = [mean([run_sim_risk(a, sow, p, λ) for sow in sows_opt]) for a in actions_try]
+npvs_moore_risk = [mean([run_sim_risk(a, sow, p, λ) for sow in first(sows, N_more)]) for a in actions_try]
+```
+
+```{julia}
+#| echo: false
+
+plot(elevations_try, npvs_moore_risk ./ 1000; label="Risk-based First $(N_more) SOWs", marker=:circle, linecolor=:red)
+plot!(elevations_try, npvs_moore ./ 1000; xlabel="Elevation [ft]", ylabel="NPV [1000 USD]", label=" None Risk-based First $(N_more) SOWs", marker=:circle, linecolor=:blue, title="Risk-based vs non risk-based")
+vline!([minimizer(result_risk)]; label="Risk-base Optimal elevation", linestyle=:dash, linecolor=:orange)
+vline!([minimizer(result)]; label="Non risk-based Optimal elevation", linestyle=:dash)
+```
+
+## Calibration of the risk premium sampling
+
+-   Using Average market risk premium in the U.S. 2011-2023 Published by Statista Research Department, Jun 14, 2023; a normal distribution N(0.06,0.0004) were used for the sampling of the equity risk premium [@statista2023] .
+-   The mean and the standard deviation for the distribution were calculated using the historical data.
+-   Quantile-Quantile (Q-Q) Plot were used to validate the calibration -see the appendix figure.
 
 # Results
 
-Present the results obtained from the enhanced decision-support tool.
-Use tables, figures, and visualizations to clearly communicate the outcomes.
-Provide sufficient detail to demonstrate how the implemented feature addresses the problem statement.
-Use the `#| output: false` and/or `#| echo: false` tags to hide code output and code cells in the final report except where showing the output (e.g.g, a plot) or the code (e.g., how you are sampling SOWs) adds value to the discussion.
-You may have multiple subsections of results, which you can create using `##`.
+## Non risk-based NPV for all sow
 
-# Conclusions
+```{julia}
+#| echo: false
 
-## Discussion
+plot(
+    elevations_try,
+    npvs_opt ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    label="First $(N_SOW_opt) SOWs",
+    marker=:circle, title="")
 
-Analyze the implications of your results for climate risk management.
-Consider the context of the class themes and discuss how your findings contribute to the understanding of climate risk assessment.
-Identify any limitations of your approach and suggest potential improvements for future work.
+plot!(elevations_try, npvs_moore ./ 1000; label="First $(N_more) SOWs", marker=:circle)
+vline!([minimizer(result)]; label="Optimal", linestyle=:dash)
+```
 
-## Conclusions
+## Non risk-based NPV for all sow
 
-Summarize the key findings of your project and reiterate the significance of your implemented feature in addressing the problem statement.
-Discuss the broader implications of your work for climate risk management and the potential for further research in this area.
+```{julia}
+#| echo: false
+plot!(elevations_try, npvs_moore_risk ./ 1000; label="Risk_premium_First $(N_more) SOWs", marker=:circle)
+plot!(elevations_try, npvs_opt_risk ./ 1000; label="Risk_premium_First $(N_SOW_opt) SOWs", marker=:circle)
+vline!([minimizer(result_risk)]; label="Risk_Optimal", linestyle=:dash)
+```
 
-# References
+## Comparing risk-based and non risk-based results for all sow
 
-:::{#refs}
+```{julia}
+#| echo: false
+
+#plots for non risk-based
+plot(
+    elevations_try,
+    npvs_opt ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    label="First $(N_SOW_opt) SOWs",
+    marker=:circle,
+)
+plot!(elevations_try, npvs_moore ./ 1000; label="First $(N_more) SOWs", marker=:circle)
+vline!([minimizer(result)]; label="Optimal", linestyle=:dash)
+#plot for risk-base
+plot!(elevations_try, npvs_moore_risk ./ 1000; label="Risk_premium_First $(N_more) SOWs", marker=:circle)
+plot!(elevations_try, npvs_opt_risk ./ 1000; label="Risk_premium_First $(N_SOW_opt) SOWs", marker=:circle)
+vline!([minimizer(result_risk)]; label="Risk_Optimal", linestyle=:dash)
+
+```
+
+## Impact of Adding Equity Risk Premium on Decision Support Tool:
+
+-   The NPV values range from -204.452M USD to -311.472M USD
+-   As elevation increases from 0.0 to 14.0 feet, the NPV generally becomes less negative, indicating a reduction in overall costs or losses as elevation increases.
+-   The NPV values range from -2338.18M USD to -899.982M USD. Similar to the non-risk analysis, as elevation increases, the NPV generally becomes less negative, suggesting a reduction in costs or losses as elevation increases.
+-   However, the NPV values are significantly more negative compared to the non-risk analysis, indicating higher costs or losses associated with incorporating the equity risk premium.
+
+# Conclusion
+
+## Discusion
+
+-   The enhanced decision-support tool could recommend elevation based on expected annual damages considering both financial and climate risk factors
+
+-   By accounting for equity risk premiums, climate risk assessments become more holistic.
+
+-   Incorporating an equity risk premium allows homeowners to assess the trade-offs between upfront costs (e.g., elevation construction) and long-term benefits (e.g., reduced flood risk).
+
+-   Owners making house elevation decisions need to be aware of the higher costs associated with assuming risk, which may influence their decision-making process.
+
+-   The tool provides a more realistic assessment of the costs and benefits, considering both the physical elevation costs and the financial risks associated with uncertain outcomes.
+
+-   The analysis highlights the need for integrated risk assessment frameworks that combine physical and financial risk considerations.
+
+-   Future studies could incorporate calibration of the equity risk premium using historical data in the financial equity markets.
+
+-   In conclusion adding the equity risk premium to the decision support tool for house elevation decisions enhances its ability to provide owners with a comprehensive understanding of the financial implications and risks associated with different elevation scenarios. This information enables owners to make more informed decisions that align with their risk tolerance and financial objectives.
+
+# references
+
+::: {#refs}
 :::
+
+# Appendix
+
+Quantile-Quantile Plot during calibration
+
+```{julia}
+#| echo: false
+#| output: true
+
+
+# Historical data
+market_risk_premium = [5.50, 5.50, 5.70, 5.40, 5.50, 5.30, 5.70, 5.40, 5.60, 5.60, 5.50, 5.60, 5.70]
+
+# Normal distribution parameters
+μ = 0.0554
+σ = 0.0004
+normal_dist = Normal(μ, σ)
+
+# Calculate quantiles of historical data
+n = length(market_risk_premium)
+quantiles_data = quantile(market_risk_premium, collect(0.01:0.01:0.99))
+
+# Calculate quantiles of Normal distribution
+quantiles_norm = quantile(normal_dist, collect(0.01:0.01:0.99))
+
+# Plot Q-Q plot
+plot(quantiles_norm, quantiles_data, line=:dash, legend=false)
+scatter!(quantiles_norm, quantiles_data, xlabel="Theoretical Quantiles (Normal Distribution)", ylabel="Sample Quantiles (Historical Data)", title="Quantile-Quantile Plot")
+
+```

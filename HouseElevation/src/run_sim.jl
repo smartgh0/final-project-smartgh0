@@ -40,3 +40,9 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
     ead_npv = sum(eads .* discount_fracs)
     return -(ead_npv + construction_cost)
 end
+
+"""
+Run the model for a given action and SOW
+
+Expected Annual Damages are computed adding risk-based premuim
+"""
