@@ -4,4 +4,4 @@ Equity risk premium model assumes that investors demand a higher return or benef
 
 By analyzing real-world examples and leveraging asset pricing models, we highlight the practical implications of considering risk in elevation strategies.
 
-The project was built using Juli, Quarto and juperter notebooks. See full project report for the results and more details on the project.
+The project was built using Julia, Quarto and juperter notebooks. See full project report for the results and more details on the project.
