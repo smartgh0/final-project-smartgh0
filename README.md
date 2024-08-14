@@ -1,6 +1,2 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/DLbQkI89)
-# Final Project
-
-See Canvas for instructions.
-You may want to refer to the solutions for lab 6 (house elevation) and/or lab 7 (parking garage).
-Please use `template.qmd` as a starting point, though you may need to modify it to suit your needs.
+In this final project, we delve into the significance of integrating the risk premium into house elevation models. We explore how it affects expected average damages (EAD), net present value (NPV), and overall cost-benefits analysis. Equity risk premium model assumes that investors demand a higher return or benefits for accepting the additional risk associated with investing in the market and adding this to the house elevation model, integrates risk-reward trade-off of elevating homes (Investopedia 2021).
+By analyzing real-world examples and leveraging asset pricing models, we highlight the practical implications of considering risk in elevation strategies.
